@@ -652,7 +652,7 @@ function startQuizFromMenu() {
 
 
 /* =========================================================
-   ESTADOS E BANCO DE DADOS DA TEIA ADAPTATIVA
+   ESTADOS E BANCO DE DADOS DA TEIA ADAPTATIVA (LIMPO DE REPETIÇÕES)
 ========================================================= */
 const states = {
     vergonha: {
@@ -849,7 +849,6 @@ const questions = {
         { text: "Você está irritado porque alguma coisa ultrapassou um limite ou não aconteceu como queria?", desc: "A raiva pode indicar frustração ou um limite atingido.", points: { raiva: 4, frustracao: 2 } },
         { text: "Você sente falta de alguém, algum lugar ou alguma época?", desc: "", points: { saudade: 4, solidao: 1 } },
         { text: "Você está muito ligado a alguém, personagem, assunto ou atividade?", desc: "Uma ligação forte pode ser apego, admiração, identificação ou hiperfoco.", points: { apego: 3, hiperfoco: 2 } },
-        { text: "Você sente vontade de sentir alguma coisa forte?", desc: "Às vezes a busca é pela intensidade, não necessariamente pela experiência específica.", points: { intensidade: 4, vazio: 2, euforia: 1 } },
         { text: "Você está sentindo atração por alguém ou alguma coisa?", desc: "Atração não é a mesma coisa que admiração, identificação ou curiosidade.", points: { atracao: 4, desejo: 2, curiosidade: 1 } },
         { text: "Você sente uma mistura confusa de emoções que não consegue separar ou nomear?", desc: "Dificuldade comum em reconhecer os próprios sentimentos no momento.", points: { entorpecimento: 2, sobrecarga: 3, compreensao: 2 } },
         { text: "Você percebe uma irritação inexplicável surgindo do nada por qualquer pequeno detalhe?", desc: "Pode ser sinal de cansaço acumulado ou necessidade de espaço.", points: { sobrecarga: 4, raiva: 2, inquietacao: 1 } }
@@ -860,19 +859,17 @@ const questions = {
         { text: "Os estímulos ao redor parecem demais?", desc: "Sons, luzes, pessoas, informações ou demandas podem estar acumulando.", points: { sobrecarga: 5, ansiedade: 1 } },
         { text: "Você está cansado, pesado ou com pouca energia?", desc: "Cansaço físico também pode deixar emoções e estímulos mais difíceis de processar.", points: { tristeza: 2, vazio: 2, sobrecarga: 2 } },
         { text: "Você sente que precisa de pressão, movimento ou uma sensação física mais forte?", desc: "Reduzir estímulos nem sempre é suficiente para relaxar o corpo.", points: { tensao: 4, intensidade: 2, inquietacao: 2 } },
-        { text: "Você está adiando ir ao banheiro ou percebe que está segurando alguma necessidade física?", desc: "Desconfortos que ficam sendo adiados podem contribuir para irritação, tensão e sobrecarga.", points: { tensao: 2, sobrecarga: 3, inquietacao: 2 } },
         { text: "Você bebeu água recentemente?", desc: "Não precisa estar com sede intensa para perceber que talvez esteja faltando hidratação.", points: { sobrecarga: 1, tensao: 1, vazio: 1 } },
         { text: "Você comeu alguma coisa há pouco tempo?", desc: "Fome ou longos períodos sem comer podem influenciar energia, irritação e percepção corporal.", points: { sobrecarga: 2, inquietacao: 1, vazio: 2 } },
-        { text: "Você está com calor, frio ou alguma outra sensação física desconfortável?", desc: "Às vezes o corpo está pedindo uma mudança simples no ambiente.", points: { sobrecarga: 3, tensao: 1, inquietacao: 1 } },
-        { text: "Você está precisando de banho ou de trocar de roupa porque está se sentindo fisicamente desconfortável?", desc: "Sensações corporais persistentes podem se misturar com irritação, inquietação ou sobrecarga.", points: { sobrecarga: 2, tensao: 2, inquietacao: 2 } },
+        { text: "Você está com calor, frio, desconfortável com a roupa ou precisando de banho?", desc: "Às vezes o corpo está pedindo uma mudança simples no ambiente.", points: { sobrecarga: 3, tensao: 2, inquietacao: 1 } },
         { text: "Você está se sentindo desconectado do corpo ou como se estivesse meio distante de si mesmo?", desc: "Isso pode acontecer durante estados de dissociação ou quando você está muito sobrecarregado.", points: { entorpecimento: 4, sobrecarga: 2, escape: 1 } },
         { text: "Você nota seu coração batendo forte ou respiração curta sem ter feito esforço físico?", desc: "Sinal clássico de ativação autonômica ou ansiedade oculta.", points: { ansiedade: 4, medo: 2, tensao: 2 } },
         { text: "Seus ombros, mandíbula ou mãos estão tensionados sem você perceber?", desc: "Indica acúmulo de tensão somática.", points: { tensao: 5, sobrecarga: 2 } }
     ],
     need: [
         { text: "Você está tentando conseguir conforto ou aliviar alguma coisa?", desc: "", points: { seguranca: 3, escape: 2, alivio: 2 } },
-        { text: "Você quer que alguém perceba, escute ou reconheça você?", desc: "", points: { atencao: 4, validacao: 3, desejado: 2 } },
         { text: "Você quer carinho, proximidade ou companhia?", desc: "", points: { carencia: 3, proximidade: 4, solidao: 2 } },
+        { text: "Você quer que alguém perceba, escute ou reconheça você?", desc: "", points: { atencao: 4, validacao: 3, desejado: 2 } },
         { text: "Você está tentando entender exatamente o que está acontecendo com você?", desc: "", points: { compreensao: 5, curiosidade: 1 } },
         { text: "Você quer controlar ou organizar alguma coisa para diminuir a incerteza?", desc: "", points: { controle: 5, seguranca_busca: 2 } },
         { text: "Você quer sentir alguma coisa mais intensa?", desc: "", points: { intensidade: 4, euforia: 2, vazio: 2 } },
@@ -885,23 +882,17 @@ const questions = {
     action: [
         { text: "Você está preso em uma coisa e está difícil parar?", desc: "Pode ser hiperfoco ou simplesmente uma atividade muito envolvente.", points: { hiperfoco: 5, intensidade: 1 } },
         { text: "Você sente que precisa descarregar energia fisicamente?", desc: "", points: { tensao: 4, inquietacao: 4, intensidade: 2 } },
-        { text: "Os estímulos estão demais e você precisa diminuir o que está recebendo?", desc: "", points: { sobrecarga: 5, ansiedade: 1 } },
         { text: "Você está precisando de descanso básico, como comer, beber água ou dormir?", desc: "Antes de procurar uma solução emocional complexa, vale verificar se o corpo está precisando de algo básico.", points: { vazio: 2, sobrecarga: 3, tensao: 1 } },
         { text: "Você está adiando alguma necessidade física, como ir ao banheiro, beber água ou comer?", desc: "Resolver uma necessidade básica pode diminuir desconfortos que estavam parecendo emocionais.", points: { sobrecarga: 3, tensao: 2, inquietacao: 2 } },
-        { text: "Você está com calor, frio, desconfortável com a roupa ou precisando de banho?", desc: "Às vezes uma mudança física simples é mais útil do que tentar relaxar mentalmente.", points: { sobrecarga: 3, tensao: 2 } },
         { text: "Você precisa sair mentalmente da situação por um tempo?", desc: "", points: { escape: 4, sobrecarga: 2, ansiedade: 1 } },
         { text: "Você sente vontade de se enrolar em algo pesado ou apertado?", desc: "Busca por pressão profunda para autorregulação.", points: { tensao: 3, seguranca_busca: 3 } },
         { text: "Você está alternando rapidamente entre várias tarefas sem conseguir focar em nenhuma?", desc: "Sinal típico de sobrecarga cognitiva ou agitação interna.", points: { sobrecarga: 4, inquietacao: 3 } }
     ],
     unknown: [
         { text: "Existe alguma coisa acontecendo no seu corpo que você consegue perceber?", desc: "", points: { tensao: 2, inquietacao: 1, sobrecarga: 1 } },
-        { text: "Você está com alguma necessidade física pendente, como banheiro, água, comida, temperatura ou descanso?", desc: "Às vezes é difícil identificar uma emoção quando o corpo está desconfortável.", points: { sobrecarga: 3, tensao: 2, inquietacao: 1 } },
-        { text: "Você está se sentindo desconectado ou distante do próprio corpo?", desc: "", points: { entorpecimento: 3, sobrecarga: 2, escape: 1 } },
         { text: "Existe uma vontade forte de alguma coisa?", desc: "", points: { desejo: 2, intensidade: 2, carencia: 1 } },
         { text: "Você está tentando entender ou descobrir alguma coisa?", desc: "", points: { compreensao: 3, curiosidade: 2, exploracao: 1 } },
-        { text: "Você gostaria que alguém estivesse perto ou prestando atenção em você?", desc: "", points: { proximidade: 3, atencao: 3, carencia: 2 } },
-        { text: "Você sente que precisa sair dessa situação ou desligar dela?", desc: "", points: { escape: 3, sobrecarga: 2, entorpecimento: 1 } },
-        { text: "Você está procurando alguma coisa intensa para escapar da sua cabeça?", desc: "", points: { escape: 3, intensidade: 3, sobrecarga: 1 } }
+        { text: "Você gostaria que alguém estivesse perto ou prestando atenção em você?", desc: "", points: { proximidade: 3, atencao: 3, carencia: 2 } }
     ]
 };
 
