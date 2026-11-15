@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa de Estados</title>
+<!-- Fonte acolhedora -->
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;800&display=swap" rel="stylesheet">
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    /* MODO CLARO - 5 Cores: Branco, Azul Claro, Verde, Amarelo, Vermelho */
+    --bg-grad-1: #cce7f7;
+    --bg-grad-2: #ffffff;
+    --bubble-bg: #ffffff;
+    --bubble-border: #cce7f7;
+    --bubble-shadow: 0 12px 30px rgba(204, 231, 247, 0.4);
+
+    --branco: #ffffff;
+    --azul: #cce7f7;
+    --verde: #c5f0d1;
+    --amarelo: #faedcc;
+    --vermelho: #f7c5c5;
+
+    --texto: #4a5568;
+    --btn-hover: rgba(204, 231, 247, 0.5);
+}
+
+[data-theme="dark"] {
+    /* MODO ESCURO DISCRETO - Mantendo exatamente as mesmas cores em tons suaves no escuro */
+    --bg-grad-1: #1a202c;
+    --bg-grad-2: #2d3748;
+    --bubble-bg: #2d3748;
+    --bubble-border: #4a5568;
+    --bubble-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+
+    --branco: #2d3748;
+    --azul: #2b4c6f;
+    --verde: #234d31;
+    --amarelo: #574823;
+    --vermelho: #5c3232;
+
+    --texto: #edf2f7;
+    --btn-hover: rgba(255, 255, 255, 0.08);
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2));
+    color: var(--texto);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+button {
+    font-family: inherit;
+}
+
+.app {
+    width: 100%;
+    max-width: 580px;
+    height: 100dvh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 12px;
+}
+
+.bubble {
+    width: 100%;
+    max-height: calc(100dvh - 32px);
+
+    background: var(--bubble-bg);
+    border: 3px solid var(--bubble-border);
+    border-radius: 44px;
+
+    padding: 24px;
+    box-shadow: var(--bubble-shadow);
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.screen {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-in {
+    animation: fadeSlideIn 0.25s ease-out forwards;
+}
+
+/* =========================================================
+   CABEÇALHO GLOBAL (BOTÃO DE TEMA DISCRETO)
+========================================================= */
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.version-badge {
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.5;
+}
+
+.theme-toggle-btn {
+    background: transparent;
+    border: 1.5px solid var(--bubble-border);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--texto);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.1s;
+}
+
+.theme-toggle-btn:hover {
+    opacity: 1;
+}
+
+.theme-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+/* =========================================================
+   MENU RÁPIDO / INFORMATIVO
+========================================================= */
+
+.quick-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu-title-box {
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.menu-title-box h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.menu-title-box p {
+    margin: 4px 0 0 0;
+    opacity: 0.7;
+    font-size: 12px;
+}
+
+.menu-toggle-btn {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--azul);
+    border: none;
+    border-radius: 24px;
+    color: var(--texto);
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: filter 0.15s;
+}
+
+.menu-toggle-btn:hover {
+    filter: brightness(0.96);
+}
+
+.menu-content {
+    background: var(--branco);
+    border: 2px solid var(--azul);
+    border-radius: 20px;
+    padding: 12px 16px;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-top: -4px;
+}
+
+.menu-content p {
+    margin: 0 0 8px 0;
+}
+
+.menu-content p:last-child {
+    margin-bottom: 0;
+}
+
+.menu-content ol {
+    margin: 4px 0 0 0;
+    padding-left: 16px;
+}
+
+.menu-content li {
+    margin-bottom: 4px;
+}
+
+.start-quiz-btn {
+    width: 100%;
+    min-height: 50px;
+    margin-top: 6px;
+    background: var(--verde);
+    border: none;
+    border-radius: 28px;
+    color: var(--texto);
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(197, 240, 209, 0.4);
+    transition: transform 0.12s, filter 0.12s;
+}
+
+.start-quiz-btn:hover {
+    filter: brightness(0.96);
+}
+
+.start-quiz-btn:active {
+    transform: scale(0.98);
+}
+
+/* =========================================================
+   ESTRUTURA DE TOPO E PROGRESSO DO QUIZ
+========================================================= */
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+    min-height: 26px;
+}
+
+.mini-back-button {
+    border: none;
+    background: var(--azul);
+    color: var(--texto);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.mini-back-button:hover {
+    filter: brightness(0.96);
+}
+
+.progress {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--azul);
+    opacity: 0.4;
+    transition: background 0.2s, transform 0.2s, opacity 0.2s;
+}
+
+.progress-dot.done { background: var(--verde); opacity: 1; }
+.progress-dot.active { background: var(--azul); opacity: 1; transform: scale(1.3); }
+.progress-dot.tie-break { background: var(--amarelo); opacity: 1; }
+
+.question-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.question {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.question h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.question p {
+    margin: 8px 0 0;
+    opacity: 0.75;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.answer-button {
+    width: 100%;
+    min-height: 50px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 28px;
+    color: var(--texto);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s, filter 0.12s;
+}
+
+.answer-button:nth-child(1) { background: var(--verde); }
+.answer-button:nth-child(2) { background: var(--vermelho); }
+.answer-button:nth-child(3) { background: var(--amarelo); }
+
+.answer-button:active { transform: scale(0.98); }
+.answer-button:hover { filter: brightness(0.96); }
+
+.key-hint {
+    position: absolute;
+    left: 14px;
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--branco);
+    border-radius: 999px;
+    padding: 2px 6px;
+    opacity: 0.8;
+}
+
+/* Marca d'água no rodapé do questionário */
+.quiz-watermark {
+    text-align: center;
+    font-size: 10px;
+    opacity: 0.4;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+
+/* =========================================================
+   RESULTADOS E CAIXAS
+========================================================= */
+
+.result { text-align: center; }
+
+.result-label {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--azul);
+    color: var(--texto);
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.result h2 { margin: 0; font-size: 24px; font-weight: 800; }
+.percentage { margin-top: 6px; font-size: 15px; font-weight: 800; opacity: 0.8; }
+.result-evidence { margin-top: 4px; font-size: 12px; font-weight: 700; opacity: 0.6; }
+.result-description { margin: 14px 0 16px; font-size: 13px; line-height: 1.5; }
+
+.action-box {
+    text-align: left;
+    background: var(--branco);
+    border: 2px solid var(--verde);
+    border-radius: 24px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+}
+
+.action-box h3 { margin: 0 0 6px; font-size: 14px; font-weight: 800; }
+.action-box ul { margin: 0; padding-left: 18px; }
+.action-box li { margin-bottom: 4px; line-height: 1.4; font-size: 12px; }
+
+.other-results {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 2px solid var(--azul);
+    text-align: left;
+}
+
+.other-results h3 { margin: 0 0 8px; font-size: 13px; font-weight: 800; opacity: 0.7; }
+
+.other-result-card {
+    background: var(--branco);
+    border: 2px solid var(--azul);
+    border-radius: 20px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+}
+
+.other-result-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.other-result-name { font-weight: 800; font-size: 13px; }
+.other-result-percent { font-weight: 800; font-size: 12px; opacity: 0.7; }
+.other-result-evidence { margin-top: 2px; font-size: 10px; font-weight: 700; opacity: 0.5; }
+.other-result-description { margin-top: 4px; font-size: 11px; line-height: 1.3; opacity: 0.8; }
+
+.navigation {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.nav-button {
+    flex: 1;
+    min-height: 44px;
+    border: none;
+    border-radius: 24px;
+    background: var(--azul);
+    color: var(--texto);
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: filter 0.12s;
+}
+
+.nav-button:hover { filter: brightness(0.96); }
+.nav-button.primary { background: var(--amarelo); }
+.nav-button.green { background: var(--verde); }
+
+@media (max-width: 500px) {
+    .app { padding: 8px; }
+    .bubble { padding: 16px; border-radius: 36px; max-height: calc(100dvh - 16px); }
+    .key-hint { display: none; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+<div class="bubble">
+
+    <!-- CABEÇALHO GLOBAL (Versão e Botão de Tema Discreto) -->
+    <header class="app-header">
+        <span class="version-badge">v.1</span>
+        <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()">
+            ☀️Tema
+        </button>
+    </header>
+
+    <!-- MENU RÁPIDO / INFORMATIVO (Some ao iniciar) -->
+    <nav class="quick-menu" id="quickMenuScreen">
+        <div class="menu-title-box">
+            <h1>Mapa de Estados</h1>
+            <p>Guia para entender o que estou sentindo</p>
+        </div>
+
+        <button class="menu-toggle-btn" onclick="toggleMenu('contentAlexitimia')">
+            <span>🧠 O que é?</span>
+            <span>▼</span>
+        </button>
+        <div id="contentAlexitimia" class="menu-content hidden">
+            <p>Algumas pessoas possuem dificuldade de identificar, nomear e distinguir as próprias emoções e sensações corporais (alexitimia) e para perceber os sinais internos do próprio corpo, como fome, sede ou batimentos cardíacos (interocepção).</p>
+            <p>Este questionário funciona como um guia para mapear essas hipóteses do seu estado atual.</p>
+        </div>
+
+        <button class="menu-toggle-btn" onclick="toggleMenu('contentIndicado')">
+            <span>👥 Para quem é indicado</span>
+            <span>▼</span>
+        </button>
+        <div id="contentIndicado" class="menu-content hidden">
+            <ol>
+                <li><strong>Pessoas neurodivergentes</strong> (TEA, TDAH) com desafios de alexitimia e/ou interocepção.</li>
+                <li><strong>Pessoas em terapia</strong> ou praticando autocompaixão / DBT.</li>
+                <li><strong>Pessoas altamente sensíveis (PAS)</strong> ou em esgotamento (Burnout).</li>
+            </ol>
+        </div>
+
+        <button class="menu-toggle-btn" onclick="toggleMenu('contentCreditos')">
+            <span>✨ Créditos & Inspirações</span>
+            <span>▼</span>
+        </button>
+        <div id="contentCreditos" class="menu-content hidden">
+            <p>Criado por Lu Amorim com apoio de IAs (ChatGPT e Gemini).</p>
+            <p>Inspirado em abordagens terapêuticas de regulação somática e processamento sensorial.</p>
+        </div>
+
+        <button class="start-quiz-btn" onclick="startQuizFromMenu()">
+            Começar Mapa de Estados ➔
+        </button>
+    </nav>
+
+    <!-- TELA DO QUIZ -->
+    <section id="quizScreen" class="screen hidden">
+        <div>
+            <div class="top-bar">
+                <button id="quizBackButton" class="mini-back-button hidden" title="Voltar">
+                    ← Voltar
+                </button>
+                <div id="progress" class="progress"></div>
+            </div>
+
+            <div class="question-wrapper">
+                <div id="questionContainer" class="question">
+                    <h2 id="questionText"></h2>
+                    <p id="questionDescription"></p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="answers">
+                <button class="answer-button" data-answer="yes">
+                    <span class="key-hint">1</span> Sim
+                </button>
+                <button class="answer-button" data-answer="no">
+                    <span class="key-hint">2</span> Não
+                </button>
+                <button class="answer-button" data-answer="unknown">
+                    <span class="key-hint">3</span> Não sei
+                </button>
+            </div>
+            <!-- Marca d'água de versão no rodapé do questionário -->
+            <div class="quiz-watermark">Nov 2026</div>
+        </div>
+    </section>
+
+    <!-- TELA DE RESULTADOS -->
+    <section id="resultScreen" class="screen hidden">
+        <div class="result">
+            <div class="result-label">RESULTADO MAIS PROVÁVEL</div>
+            <h2 id="resultName"></h2>
+            <div id="resultPercentage" class="percentage"></div>
+            <div id="resultEvidence" class="result-evidence"></div>
+            <div id="resultDescription" class="result-description"></div>
+
+            <div class="action-box">
+                <h3>O que pode ajudar agora</h3>
+                <ul id="resultActions"></ul>
+            </div>
+
+            <div id="otherResultsContainer" class="other-results hidden">
+                <h3>Outros resultados possíveis</h3>
+                <div id="otherResultsList"></div>
+            </div>
+
+            <div class="navigation">
+                <button id="backButton" class="nav-button">← Voltar</button>
+                <button id="otherResultsButton" class="nav-button primary">Outros resultados</button>
+                <button id="restartButton" class="nav-button green">Menu Principal</button>
+            </div>
+        </div>
+    </section>
+
+</div>
+</div>
+
+<script>
+// @ts-nocheck
+
+/* =========================================================
+   GERENCIAMENTO DE TEMA (CLARO / ESCURO)
+========================================================= */
+function toggleTheme() {
+    const htmlEl = document.documentElement;
+    const btn = document.getElementById("themeToggleBtn");
+    if (htmlEl.getAttribute("data-theme") === "dark") {
+        htmlEl.removeAttribute("data-theme");
+        localStorage.setItem("mapa_tema_v1", "light");
+        btn.textContent = "☀️Tema";
+    } else {
+        htmlEl.setAttribute("data-theme", "dark");
+        localStorage.setItem("mapa_tema_v1", "dark");
+        btn.textContent = "🌙Tema";
+    }
+}
+
+if (localStorage.getItem("mapa_tema_v1") === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+    document.getElementById("themeToggleBtn").textContent = "☀️ Tema";
+}
+
+/* =========================================================
+   CONTROLE DO MENU RÁPIDO
+========================================================= */
+/** @param {string} contentId */
+function toggleMenu(contentId) {
+    const el = document.getElementById(contentId);
+    if (!el) return;
+    const isHidden = el.classList.contains('hidden');
+    document.querySelectorAll('.menu-content').forEach(item => item.classList.add('hidden'));
+    if (isHidden) el.classList.remove('hidden');
+}
+
+function startQuizFromMenu() {
+    quickMenuScreen.classList.add("hidden");
+    quizScreen.classList.remove("hidden");
+    triggerAnimation(quizScreen);
+    startQuiz();
+}
+
+
+/* =========================================================
+   ESTADOS E BANCO DE DADOS DA TEIA ADAPTATIVA
+========================================================= */
+const states = {
+    vergonha: {
+        name: "Vergonha",
+        description: "Pode aparecer quando você sente vontade de desaparecer, teme ser julgado ou interpreta algo que aconteceu como uma exposição de quem você é.",
+        actions: ["Afaste-se um pouco da situação antes de tentar resolver tudo.", "Evite se punir enquanto a emoção estiver muito forte.", "Pergunte: eu realmente fiz algo errado ou estou apenas me sentindo exposto?", "Se precisar, faça algo que devolva sensação de segurança ao corpo."]
+    },
+    culpa: {
+        name: "Culpa",
+        description: "A culpa costuma apontar para algo que você fez ou deixou de fazer e que entrou em conflito com seus valores.",
+        actions: ["Identifique exatamente o que aconteceu.", "Separe responsabilidade real de responsabilidade imaginada.", "Se alguém foi prejudicado, pense em uma reparação possível.", "Depois disso, permita-se seguir em frente."]
+    },
+    vazio: {
+        name: "Vazio",
+        description: "Pode ser uma sensação de pouca emoção, falta de interesse ou vontade de sentir alguma coisa, qualquer coisa.",
+        actions: ["Procure uma atividade pequena que produza alguma sensação agradável.", "Coma, beba água ou descanse se estiver fisicamente esgotado.", "Experimente música, banho, jogo, desenho ou outra atividade sensorial.", "Não tente transformar imediatamente o vazio em uma decisão importante."]
+    },
+    frustracao: {
+        name: "Frustração",
+        description: "Você queria que algo acontecesse de uma determinada maneira, mas alguma coisa impediu ou mudou o resultado.",
+        actions: ["Identifique o que você queria que acontecesse.", "Separe o que ainda pode ser mudado do que já aconteceu.", "Faça uma pausa antes de tentar forçar uma solução.", "Escolha uma próxima ação pequena e possível."]
+    },
+    alivio: {
+        name: "Alívio",
+        description: "Seu corpo ou sua mente podem estar diminuindo a tensão depois de algo difícil, assustador ou cansativo.",
+        actions: ["Permita que o corpo desacelere.", "Beba água e respire sem tentar controlar demais a respiração.", "Aproveite o momento de segurança para descansar.", "Não precisa preencher imediatamente o espaço deixado pela tensão."]
+    },
+    seguranca: {
+        name: "Segurança",
+        description: "Pode haver uma sensação de que finalmente é possível baixar a guarda e descansar.",
+        actions: ["Fique em um ambiente onde você consiga relaxar.", "Use objetos ou estímulos que transmitam familiaridade.", "Permita-se ficar quieto sem precisar produzir nada.", "Se quiser proximidade, procure alguém com quem você se sinta seguro."]
+    },
+    euforia: {
+        name: "Euforia / intensidade",
+        description: "Tudo pode parecer muito interessante, urgente ou significativo. A intensidade pode ser prazerosa, mas também pode dificultar perceber o que você realmente quer.",
+        actions: ["Diminua um pouco a velocidade antes de tomar decisões.", "Beba água, coma se estiver com fome e movimente o corpo.", "Pergunte: eu realmente quero fazer isso ou preciso descarregar a intensidade?", "Se estiver em hiperfoco, estabeleça um ponto de pausa."]
+    },
+    tristeza: {
+        name: "Tristeza",
+        description: "Pode surgir quando algo foi perdido, frustrado ou quando você está emocionalmente esgotado.",
+        actions: ["Permita-se sentir sem exigir uma solução imediata.", "Procure conforto físico e um ambiente seguro.", "Coma, beba água e descanse se estiver cansado.", "Faça algo pequeno que seja gentil com você."]
+    },
+    ansiedade: {
+        name: "Ansiedade",
+        description: "Seu sistema pode estar antecipando problemas, perigos ou consequências antes que eles realmente aconteçam.",
+        actions: ["Observe o que é fato e o que é previsão.", "Diminua os estímulos se estiver sobrecarregado.", "Faça uma atividade física simples para descarregar tensão.", "Escolha apenas a próxima coisa que precisa ser feita."]
+    },
+    raiva: {
+        name: "Raiva",
+        description: "Pode indicar que algo ultrapassou um limite, foi injusto, frustrante ou ameaçador para você.",
+        actions: ["Não tome decisões importantes no pico da raiva.", "Afaste-se da situação se houver risco de agir impulsivamente.", "Use movimento físico para descarregar energia.", "Depois, identifique qual limite ou necessidade foi atingido."]
+    },
+    medo: {
+        name: "Medo",
+        description: "Seu corpo pode estar se preparando para se proteger de algo que percebe como ameaça.",
+        actions: ["Procure identificar qual é o perigo específico.", "Observe se existe uma ameaça presente ou apenas uma possibilidade.", "Aproxime-se de um ambiente ou pessoa que transmita segurança.", "Espere o corpo diminuir a ativação antes de decidir."]
+    },
+    nojo: {
+        name: "Nojo",
+        description: "Pode ser uma reação de afastamento diante de algo percebido como desagradável, invasivo ou incompatível com você.",
+        actions: ["Afaste-se do estímulo se puder.", "Não se obrigue a continuar em contato com algo que está causando repulsa.", "Observe se o nojo está ligado ao estímulo atual ou a alguma associação.", "Dê tempo para o corpo voltar ao normal."]
+    },
+    alegria: {
+        name: "Alegria",
+        description: "Há uma sensação de prazer, satisfação ou energia positiva relacionada a algo que aconteceu ou está acontecendo.",
+        actions: ["Permita-se aproveitar sem precisar analisar tudo.", "Compartilhe a experiência se isso fizer sentido.", "Observe o que exatamente tornou esse momento bom.", "Guarde essa informação para momentos mais difíceis."]
+    },
+    carencia: {
+        name: "Carência",
+        description: "Pode existir uma necessidade forte de carinho, atenção, presença ou conexão.",
+        actions: ["Identifique qual tipo de contato você está procurando.", "Procure companhia segura se isso for possível.", "Não transforme automaticamente carência em interesse romântico.", "Também pode ajudar oferecer conforto a si mesmo."]
+    },
+    solidao: {
+        name: "Solidão",
+        description: "Pode haver falta de conexão ou companhia, mesmo quando existem pessoas ao redor.",
+        actions: ["Procure uma interação pequena e segura.", "Mande uma mensagem para alguém confiável.", "Faça uma atividade compartilhada, mesmo à distância.", "Lembre-se de que solidão não é prova de rejeição."]
+    },
+    desejo: {
+        name: "Desejo",
+        description: "Existe uma vontade direcionada a alguma coisa. Sentir desejo não significa automaticamente que você precise agir.",
+        actions: ["Identifique exatamente o que você deseja.", "Observe se o desejo continua depois de alguns minutos.", "Separe vontade, fantasia, curiosidade e decisão.", "Escolha conscientemente se quer fazer alguma coisa com esse desejo."]
+    },
+    tensao: {
+        name: "Tensão corporal",
+        description: "Seu corpo pode estar ativado ou contraído mesmo quando você não consegue identificar claramente uma emoção.",
+        actions: ["Experimente alongar ou contrair e soltar os músculos.", "Faça algum movimento mais intenso por alguns minutos.", "Use pressão ou contenção corporal se isso for confortável para você.", "Reduzir estímulos pode ajudar, mas nem sempre relaxa a musculatura sozinho."]
+    },
+    sobrecarga: {
+        name: "Sobrecarga",
+        description: "Pode haver estímulo demais, exigências demais ou pouco espaço para processar tudo ao mesmo tempo. Desconfortos físicos básicos aumentam a irritação.",
+        actions: ["Reduza estímulos desnecessários.", "Pare de adicionar novas tarefas por alguns minutos.", "Use abafadores ou outros recursos sensoriais se ajudarem.", "Verifique necessidades básicas (água, banheiro, temperatura)."]
+    },
+    inquietacao: {
+        name: "Inquietação",
+        description: "Seu corpo pode estar pedindo movimento ou mudança de estado.",
+        actions: ["Levante e caminhe um pouco.", "Alongue braços, pernas e costas.", "Faça uma atividade manual.", "Verifique se existe alguma necessidade física adiada."]
+    },
+    entorpecimento: {
+        name: "Entorpecimento",
+        description: "Pode parecer que as emoções estão distantes ou desligadas.",
+        actions: ["Não force uma emoção a aparecer.", "Experimente estímulos físicos suaves.", "Coma ou beba algo.", "Faça uma atividade simples e concreta."]
+    },
+    saudade: {
+        name: "Saudade",
+        description: "Existe uma falta ligada a alguém, algum lugar, época ou experiência.",
+        actions: ["Reconheça aquilo que está fazendo falta.", "Escreva sobre o que exatamente sente falta.", "Permita a saudade sem transformá-la automaticamente em ação."]
+    },
+    esperanca: {
+        name: "Esperança",
+        description: "Existe uma expectativa de que algo possa melhorar ou acontecer de uma maneira desejada.",
+        actions: ["Identifique o que exatamente você espera.", "Veja o que está sob seu controle.", "Transforme esperança em uma ação pequena."]
+    },
+    curiosidade: {
+        name: "Curiosidade",
+        description: "Você quer descobrir, experimentar ou compreender alguma coisa.",
+        actions: ["Investigue sem transformar curiosidade em obrigação.", "Procure informações confiáveis.", "Curiosidade não é necessariamente intenção."]
+    },
+    atracao: {
+        name: "Atração",
+        description: "Existe uma sensação de interesse direcionada a alguém ou alguma coisa.",
+        actions: ["Observe o que exatamente está atraindo você.", "Separe atração de admiração e identificação.", "Dê tempo para entender se a sensação permanece."]
+    },
+    apego: {
+        name: "Apego",
+        description: "Existe uma ligação emocional forte com alguém, algo ou alguma experiência.",
+        actions: ["Observe o que essa conexão significa para você.", "Separe apego de posse.", "Continue mantendo outras fontes de interesse."]
+    },
+    hiperfoco: {
+        name: "Hiperfoco",
+        description: "Sua atenção pode estar muito concentrada em uma atividade, assunto ou pessoa.",
+        actions: ["Anote o que está fazendo para não sentir que vai perder.", "Faça uma pausa para água, comida ou banheiro.", "Defina um ponto concreto para parar."]
+    },
+    intensidade: {
+        name: "Busca por intensidade",
+        description: "Pode existir uma necessidade de sentir algo forte porque o estado atual parece vazio.",
+        actions: ["Pergunte se quer realmente a experiência ou apenas a intensidade.", "Procure uma forma segura de intensidade.", "Movimento, música ou arte podem ajudar."]
+    },
+    controle: {
+        name: "Busca por controle",
+        description: "Pode haver necessidade de organizar ou prever para diminuir a incerteza.",
+        actions: ["Identifique o que está realmente sob seu controle.", "Escolha uma pequena coisa concreta para organizar.", "Aceite o que não pode ser controlado."]
+    },
+    proximidade: {
+        name: "Busca por proximidade",
+        description: "Pode existir uma necessidade de estar perto de alguém ou sentir conexão.",
+        actions: ["Identifique que tipo de proximidade procura.", "Procure alguém seguro.", "Atividades compartilhadas também ajudam."]
+    },
+    atencao: {
+        name: "Busca por atenção",
+        description: "Você pode estar procurando ser percebido, ouvido ou reconhecido.",
+        actions: ["Identifique o que gostaria que percebessem.", "Peça atenção de forma direta.", "Não trate isso como algo vergonhoso."]
+    },
+    validacao: {
+        name: "Busca por validação",
+        description: "Pode existir uma necessidade de confirmar que sua experiência faz sentido.",
+        actions: ["Tente formular primeiro sua própria avaliação.", "Procure segunda opinião se necessário.", "Sentir dúvida não invalida sua experiência."]
+    },
+    desejado: {
+        name: "Desejo de ser desejado",
+        description: "A busca não é necessariamente pela pessoa, mas pela sensação de ser escolhido e querido.",
+        actions: ["Pergunte: quero essa pessoa ou quero sentir que me querem?", "Procure formas seguras de receber carinho."]
+    },
+    escape: {
+        name: "Vontade de escapar",
+        description: "Necessidade forte de sair temporariamente de uma situação ou estado emocional.",
+        actions: ["Procure uma pausa segura.", "Mude de ambiente se puder.", "Verifique se há desconforto físico a ser reduzido."]
+    },
+    exploracao: {
+        name: "Exploração",
+        description: "Vontade de descobrir algo sobre você ou uma possibilidade.",
+        actions: ["Explore sem exigir conclusão imediata.", "Permita-se mudar de ideia."]
+    },
+    seguranca_busca: {
+        name: "Busca por segurança",
+        description: "Necessidade de diminuir incerteza e encontrar algo previsível e familiar.",
+        actions: ["Vá para um ambiente conhecido.", "Use objetos ou rotinas familiares.", "Resolva primeiro o que é urgente."]
+    },
+    compreensao: {
+        name: "Busca por compreensão",
+        description: "Tentativa de entender o que está sentindo antes de decidir o que fazer.",
+        actions: ["Descreva o que aconteceu sem interpretar ainda.", "Observe pensamentos e sensações separadamente.", "Às vezes a compreensão vem após descansar."]
+    }
+};
+
+const questions = {
+    emotion: [
+        { text: "Você sente vontade de desaparecer, se esconder ou evitar ser visto?", desc: "Isso pode apontar para vergonha, medo ou sobrecarga.", points: { vergonha: 3, medo: 1, sobrecarga: 1 } },
+        { text: "Você sente que fez algo contra seus valores ou prejudicou alguém?", desc: "Aqui estamos diferenciando culpa de vergonha.", points: { culpa: 4, vergonha: 1 } },
+        { text: "Parece que você não sente muita coisa ou que nada está interessante?", desc: "Pode existir um estado de vazio ou entorpecimento.", points: { vazio: 4, entorpecimento: 3 } },
+        { text: "Você queria que alguma coisa tivesse acontecido de outra maneira?", desc: "Observe se existe uma sensação de impedimento ou resultado frustrante.", points: { frustracao: 4, raiva: 1 } },
+        { text: "Você sente que finalmente pode relaxar depois de algo difícil?", desc: "O corpo pode estar saindo de um estado de tensão.", points: { alivio: 4, seguranca: 2 } },
+        { text: "Tudo parece muito interessante, urgente ou intenso neste momento?", desc: "Intensidade pode ser prazerosa, mas também pode dificultar perceber o que você realmente quer.", points: { euforia: 3, intensidade: 3, hiperfoco: 1 } },
+        { text: "Você está preocupado com algo que ainda nem aconteceu?", desc: "Tente diferenciar possibilidade de perigo presente.", points: { ansiedade: 4, medo: 2, controle: 1 } },
+        { text: "Você está irritado porque alguma coisa ultrapassou um limite ou não aconteceu como queria?", desc: "A raiva pode indicar frustração ou um limite atingido.", points: { raiva: 4, frustracao: 2 } },
+        { text: "Você sente falta de alguém, algum lugar ou alguma época?", desc: "", points: { saudade: 4, solidao: 1 } },
+        { text: "Você está muito ligado a alguém, personagem, assunto ou atividade?", desc: "Uma ligação forte pode ser apego, admiração, identificação ou hiperfoco.", points: { apego: 3, hiperfoco: 2 } },
+        { text: "Você sente vontade de sentir alguma coisa forte?", desc: "Às vezes a busca é pela intensidade, não necessariamente pela experiência específica.", points: { intensidade: 4, vazio: 2, euforia: 1 } },
+        { text: "Você está sentindo atração por alguém ou alguma coisa?", desc: "Atração não é a mesma coisa que admiração, identificação ou curiosidade.", points: { atracao: 4, desejo: 2, curiosidade: 1 } },
+        { text: "Você sente uma mistura confusa de emoções que não consegue separar ou nomear?", desc: "Dificuldade comum em reconhecer os próprios sentimentos no momento.", points: { entorpecimento: 2, sobrecarga: 3, compreensao: 2 } },
+        { text: "Você percebe uma irritação inexplicável surgindo do nada por qualquer pequeno detalhe?", desc: "Pode ser sinal de cansaço acumulado ou necessidade de espaço.", points: { sobrecarga: 4, raiva: 2, inquietacao: 1 } }
+    ],
+    body: [
+        { text: "Seu corpo parece contraído, rígido ou em estado de alerta?", desc: "Mesmo sem uma emoção clara, pode existir tensão corporal.", points: { tensao: 5, ansiedade: 2, medo: 1 } },
+        { text: "Você sente vontade de se mexer, andar, balançar ou fazer alguma coisa fisicamente?", desc: "", points: { inquietacao: 4, tensao: 2, intensidade: 1 } },
+        { text: "Os estímulos ao redor parecem demais?", desc: "Sons, luzes, pessoas, informações ou demandas podem estar acumulando.", points: { sobrecarga: 5, ansiedade: 1 } },
+        { text: "Você está cansado, pesado ou com pouca energia?", desc: "Cansaço físico também pode deixar emoções e estímulos mais difíceis de processar.", points: { tristeza: 2, vazio: 2, sobrecarga: 2 } },
+        { text: "Você sente que precisa de pressão, movimento ou uma sensação física mais forte?", desc: "Reduzir estímulos nem sempre é suficiente para relaxar o corpo.", points: { tensao: 4, intensidade: 2, inquietacao: 2 } },
+        { text: "Você está adiando ir ao banheiro ou percebe que está segurando alguma necessidade física?", desc: "Desconfortos que ficam sendo adiados podem contribuir para irritação, tensão e sobrecarga.", points: { tensao: 2, sobrecarga: 3, inquietacao: 2 } },
+        { text: "Você bebeu água recentemente?", desc: "Não precisa estar com sede intensa para perceber que talvez esteja faltando hidratação.", points: { sobrecarga: 1, tensao: 1, vazio: 1 } },
+        { text: "Você comeu alguma coisa há pouco tempo?", desc: "Fome ou longos períodos sem comer podem influenciar energia, irritação e percepção corporal.", points: { sobrecarga: 2, inquietacao: 1, vazio: 2 } },
+        { text: "Você está com calor, frio ou alguma outra sensação física desconfortável?", desc: "Às vezes o corpo está pedindo uma mudança simples no ambiente.", points: { sobrecarga: 3, tensao: 1, inquietacao: 1 } },
+        { text: "Você está precisando de banho ou de trocar de roupa porque está se sentindo fisicamente desconfortável?", desc: "Sensações corporais persistentes podem se misturar com irritação, inquietação ou sobrecarga.", points: { sobrecarga: 2, tensao: 2, inquietacao: 2 } },
+        { text: "Você está se sentindo desconectado do corpo ou como se estivesse meio distante de si mesmo?", desc: "Isso pode acontecer durante estados de dissociação ou quando você está muito sobrecarregado.", points: { entorpecimento: 4, sobrecarga: 2, escape: 1 } },
+        { text: "Você nota seu coração batendo forte ou respiração curta sem ter feito esforço físico?", desc: "Sinal clássico de ativação autonômica ou ansiedade oculta.", points: { ansiedade: 4, medo: 2, tensao: 2 } },
+        { text: "Seus ombros, mandíbula ou mãos estão tensionados sem você perceber?", desc: "Indica acúmulo de tensão somática.", points: { tensao: 5, sobrecarga: 2 } }
+    ],
+    need: [
+        { text: "Você está tentando conseguir conforto ou aliviar alguma coisa?", desc: "", points: { seguranca: 3, escape: 2, alivio: 2 } },
+        { text: "Você quer que alguém perceba, escute ou reconheça você?", desc: "", points: { atencao: 4, validacao: 3, desejado: 2 } },
+        { text: "Você quer carinho, proximidade ou companhia?", desc: "", points: { carencia: 3, proximidade: 4, solidao: 2 } },
+        { text: "Você está tentando entender exatamente o que está acontecendo com você?", desc: "", points: { compreensao: 5, curiosidade: 1 } },
+        { text: "Você quer controlar ou organizar alguma coisa para diminuir a incerteza?", desc: "", points: { controle: 5, seguranca_busca: 2 } },
+        { text: "Você quer sentir alguma coisa mais intensa?", desc: "", points: { intensidade: 4, euforia: 2, vazio: 2 } },
+        { text: "Você está querendo ser desejado, escolhido ou considerado especial?", desc: "", points: { desejado: 5, validacao: 2, proximidade: 1 } },
+        { text: "Você quer descobrir alguma coisa sem necessariamente saber ainda onde isso vai dar?", desc: "", points: { exploracao: 4, curiosidade: 4 } },
+        { text: "Você está procurando alguma coisa intensa para escapar da sua cabeça por um tempo?", desc: "Às vezes a necessidade não é exatamente pela atividade, mas por uma mudança forte no estado mental.", points: { escape: 4, intensidade: 3, sobrecarga: 1 } },
+        { text: "Você sente uma necessidade urgente de silêncio absoluto ou isolamento?", desc: "Aponta para esgotamento de estímulos.", points: { sobrecarga: 4, escape: 3 } },
+        { text: "Você está sentindo uma necessidade forte de segurança e previsibilidade agora?", desc: "Desejo de retornar a uma base segura.", points: { seguranca_busca: 4, controle: 2 } }
+    ],
+    action: [
+        { text: "Você está preso em uma coisa e está difícil parar?", desc: "Pode ser hiperfoco ou simplesmente uma atividade muito envolvente.", points: { hiperfoco: 5, intensidade: 1 } },
+        { text: "Você sente que precisa descarregar energia fisicamente?", desc: "", points: { tensao: 4, inquietacao: 4, intensidade: 2 } },
+        { text: "Os estímulos estão demais e você precisa diminuir o que está recebendo?", desc: "", points: { sobrecarga: 5, ansiedade: 1 } },
+        { text: "Você está precisando de descanso básico, como comer, beber água ou dormir?", desc: "Antes de procurar uma solução emocional complexa, vale verificar se o corpo está precisando de algo básico.", points: { vazio: 2, sobrecarga: 3, tensao: 1 } },
+        { text: "Você está adiando alguma necessidade física, como ir ao banheiro, beber água ou comer?", desc: "Resolver uma necessidade básica pode diminuir desconfortos que estavam parecendo emocionais.", points: { sobrecarga: 3, tensao: 2, inquietacao: 2 } },
+        { text: "Você está com calor, frio, desconfortável com a roupa ou precisando de banho?", desc: "Às vezes uma mudança física simples é mais útil do que tentar relaxar mentalmente.", points: { sobrecarga: 3, tensao: 2 } },
+        { text: "Você precisa sair mentalmente da situação por um tempo?", desc: "", points: { escape: 4, sobrecarga: 2, ansiedade: 1 } },
+        { text: "Você sente vontade de se enrolar em algo pesado ou apertado?", desc: "Busca por pressão profunda para autorregulação.", points: { tensao: 3, seguranca_busca: 3 } },
+        { text: "Você está alternando rapidamente entre várias tarefas sem conseguir focar em nenhuma?", desc: "Sinal típico de sobrecarga cognitiva ou agitação interna.", points: { sobrecarga: 4, inquietacao: 3 } }
+    ],
+    unknown: [
+        { text: "Existe alguma coisa acontecendo no seu corpo que você consegue perceber?", desc: "", points: { tensao: 2, inquietacao: 1, sobrecarga: 1 } },
+        { text: "Você está com alguma necessidade física pendente, como banheiro, água, comida, temperatura ou descanso?", desc: "Às vezes é difícil identificar uma emoção quando o corpo está desconfortável.", points: { sobrecarga: 3, tensao: 2, inquietacao: 1 } },
+        { text: "Você está se sentindo desconectado ou distante do próprio corpo?", desc: "", points: { entorpecimento: 3, sobrecarga: 2, escape: 1 } },
+        { text: "Existe uma vontade forte de alguma coisa?", desc: "", points: { desejo: 2, intensidade: 2, carencia: 1 } },
+        { text: "Você está tentando entender ou descobrir alguma coisa?", desc: "", points: { compreensao: 3, curiosidade: 2, exploracao: 1 } },
+        { text: "Você gostaria que alguém estivesse perto ou prestando atenção em você?", desc: "", points: { proximidade: 3, atencao: 3, carencia: 2 } },
+        { text: "Você sente que precisa sair dessa situação ou desligar dela?", desc: "", points: { escape: 3, sobrecarga: 2, entorpecimento: 1 } },
+        { text: "Você está procurando alguma coisa intensa para escapar da sua cabeça?", desc: "", points: { escape: 3, intensidade: 3, sobrecarga: 1 } }
+    ]
+};
+
+
+/* =========================================================
+   LÓGICA DA TEIA ADAPTATIVA E FLUXO
+========================================================= */
+const STORAGE_KEY = "mapa_de_estados_sessao_v2";
+const MAX_QUESTIONS = 15;
+const MIN_EVIDENCE = 2;
+const STOP_MARGIN = 0.35;
+
+const quickMenuScreen = document.getElementById("quickMenuScreen");
+const quizScreen = document.getElementById("quizScreen");
+const resultScreen = document.getElementById("resultScreen");
+const questionContainer = document.getElementById("questionContainer");
+const questionText = document.getElementById("questionText");
+const questionDescription = document.getElementById("questionDescription");
+const progress = document.getElementById("progress");
+const quizBackButton = document.getElementById("quizBackButton");
+
+const resultName = document.getElementById("resultName");
+const resultPercentage = document.getElementById("resultPercentage");
+const resultEvidence = document.getElementById("resultEvidence");
+const resultDescription = document.getElementById("resultDescription");
+const resultActions = document.getElementById("resultActions");
+const otherResultsButton = document.getElementById("otherResultsButton");
+const otherResultsContainer = document.getElementById("otherResultsContainer");
+const otherResultsList = document.getElementById("otherResultsList");
+const backButton = document.getElementById("backButton");
+const restartButton = document.getElementById("restartButton");
+
+let scores = {};
+let history = [];
+let currentQuestionMeta = null;
+let tieBreakActive = false;
+let tieBreakRound = 0;
+let displayedOtherResults = false;
+
+const questionBank = [];
+const questionMap = new Map();
+
+Object.entries(questions).forEach(([path, list]) => {
+    list.forEach((question, index) => {
+        const meta = { id: `${path}:${index}`, path: path, index: index, question: question };
+        questionBank.push(meta);
+        questionMap.set(meta.id, meta);
+    });
+});
+
+function saveSession() {
+    try {
+        const payload = {
+            scores, history,
+            currentQuestionId: currentQuestionMeta ? currentQuestionMeta.id : null,
+            tieBreakActive, tieBreakRound,
+            isFinished: !resultScreen.classList.contains("hidden"),
+            isMenuVisible: !quickMenuScreen.classList.contains("hidden")
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {}
+}
+
+function clearSession() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+}
+
+function restoreSession() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return false;
+        const data = JSON.parse(raw);
+        if (!data || (!data.isMenuVisible && (!Array.isArray(data.history) || data.history.length === 0))) return false;
+
+        if (data.isMenuVisible) {
+            quickMenuScreen.classList.remove("hidden");
+            quizScreen.classList.add("hidden");
+            resultScreen.classList.add("hidden");
+            return true;
+        }
+
+        quickMenuScreen.classList.add("hidden");
+        scores = data.scores || {};
+        Object.keys(states).forEach(st => { if (scores[st] === undefined) scores[st] = 0; });
+
+        history = data.history;
+        tieBreakActive = Boolean(data.tieBreakActive);
+        tieBreakRound = data.tieBreakRound || 0;
+
+        if (data.isFinished) {
+            showResult(false);
+            return true;
+        }
+
+        currentQuestionMeta = data.currentQuestionId
+            ? questionMap.get(data.currentQuestionId) || chooseNextQuestion()
+            : chooseNextQuestion();
+
+        quizScreen.classList.remove("hidden");
+        resultScreen.classList.add("hidden");
+        showQuestion(false);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+/** @param {HTMLElement} element */
+function triggerAnimation(element) {
+    if (!element) return;
+    element.classList.remove("animate-in");
+    void element.offsetWidth;
+    element.classList.add("animate-in");
+}
+
+/** @param {string} answer */
+function getAnswerMultiplier(answer) {
+    if (answer === "yes") return 1;
+    if (answer === "unknown") return 0.35;
+    if (answer === "no") return -0.25;
+    return 0;
+}
+
+function getAnsweredIds() {
+    const set = new Set();
+    history.forEach(entry => { if (entry.questionId) set.add(entry.questionId); });
+    return set;
+}
+
+/** @param {any} meta @param {string} answer */
+function applyAnswer(meta, answer) {
+    const multiplier = getAnswerMultiplier(answer);
+    if (multiplier === 0) return;
+    Object.entries(meta.question.points).forEach(([state, value]) => {
+        if (scores[state] === undefined) scores[state] = 0;
+        scores[state] += /** @type {number} */ (value) * multiplier;
+    });
+}
+
+/** @param {any} entry */
+function undoAnswer(entry) {
+    const multiplier = getAnswerMultiplier(entry.answer);
+    if (multiplier === 0) return;
+    Object.entries(entry.points).forEach(([state, value]) => {
+        if (scores[state] !== undefined) scores[state] -= /** @type {number} */ (value) * multiplier;
+        if (Math.abs(scores[state] || 0) < 0.0000001) scores[state] = 0;
+    });
+}
+
+/** @param {string} state */
+function getEvidence(state) {
+    const positive = new Set();
+    const negative = new Set();
+    let yesCount = 0, unknownCount = 0, noCount = 0;
+    let maxPositive = 0, maxNegative = 0;
+
+    history.forEach(entry => {
+        const value = entry.points[state];
+        if (value === undefined || value <= 0) return;
+        if (entry.answer === "yes") { positive.add(entry.questionId); maxPositive = Math.max(maxPositive, value); yesCount++; }
+        else if (entry.answer === "unknown") { positive.add(entry.questionId); maxPositive = Math.max(maxPositive, value * 0.35); unknownCount++; }
+        else if (entry.answer === "no") { negative.add(entry.questionId); maxNegative = Math.max(maxNegative, value * 0.25); noCount++; }
+    });
+
+    return { questionCount: positive.size + negative.size, positiveQuestionCount: positive.size, negativeQuestionCount: negative.size, maxPositiveContribution: maxPositive, maxNegativeContribution: maxNegative, yesCount, unknownCount, noCount };
+}
+
+function calculateResults() {
+    return Object.keys(states)
+        .map(state => ({ state: state, score: scores[state] || 0, evidence: getEvidence(state) }))
+        .filter(item => item.score > 0 && item.evidence.questionCount >= MIN_EVIDENCE)
+        .sort((a, b) => Math.abs(b.score - a.score) > 0.0000001 ? b.score - a.score : b.evidence.questionCount - a.evidence.questionCount);
+}
+
+function getUsableResults() {
+    let results = calculateResults();
+    if (results.length) return results;
+    return Object.keys(states)
+        .map(state => ({ state: state, score: scores[state] || 0, evidence: getEvidence(state) }))
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score);
+}
+
+/** @param {any} a @param {any} b */
+function evidenceIsIdentical(a, b) {
+    const x = a.evidence, y = b.evidence;
+    return x.questionCount === y.questionCount && x.positiveQuestionCount === y.positiveQuestionCount && x.negativeQuestionCount === y.negativeQuestionCount && Math.abs(x.maxPositiveContribution - y.maxPositiveContribution) < 0.0000001 && Math.abs(x.maxNegativeContribution - y.maxNegativeContribution) < 0.0000001 && x.yesCount === y.yesCount && x.unknownCount === y.unknownCount && x.noCount === y.noCount;
+}
+
+/** @param {any[]} results */
+function findExactTieGroup(results) {
+    if (results.length < 2) return null;
+    const first = results[0];
+    const group = results.filter(item => Math.abs(item.score - first.score) < 0.0000001 && evidenceIsIdentical(item, first));
+    return group.length >= 2 ? group : null;
+}
+
+function getCandidateQuestions() {
+    const answered = getAnsweredIds();
+    return questionBank.filter(item => !answered.has(item.id));
+}
+
+function getPotentialStates() {
+    return Object.keys(states).map(state => {
+        const score = scores[state] || 0;
+        return { state: state, score: score, weight: 0.35 + Math.max(score, 0) };
+    }).sort((a, b) => b.weight - a.weight);
+}
+
+/** @param {any} meta @param {any[]} results */
+function calculateQuestionUtility(meta, results) {
+    const potentialStates = getPotentialStates();
+    const focusStates = potentialStates.slice(0, 10);
+    if (focusStates.length === 0) return 0;
+
+    let utility = 0;
+    const answers = ["yes", "unknown", "no"];
+
+    answers.forEach(ans => {
+        const mult = getAnswerMultiplier(ans);
+        if (mult === 0) return;
+        const simulatedScores = focusStates.map(st => {
+            const pts = meta.question.points[st.state] || 0;
+            return Math.max(0, st.score + (pts * mult));
+        });
+        const mean = simulatedScores.reduce((a, b) => a + b, 0) / simulatedScores.length;
+        const variance = simulatedScores.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / simulatedScores.length;
+        utility += variance * (ans === "yes" ? 1.2 : ans === "unknown" ? 0.6 : 0.8);
+    });
+
+    if (results.length > 0) {
+        const leader = results[0];
+        const leaderVal = meta.question.points[leader.state] || 0;
+        for (let i = 1; i < Math.min(results.length, 5); i++) {
+            const comp = results[i];
+            utility += Math.abs(leaderVal - (meta.question.points[comp.state] || 0)) * (6 / (1 + i));
+        }
+    }
+    return utility;
+}
+
+/** @param {any[]} candidates */
+function chooseFirstQuestion(candidates) {
+    let best = null, bestUtility = -Infinity;
+    const potentialStates = getPotentialStates();
+    candidates.forEach(meta => {
+        let utility = Object.keys(meta.question.points).length * 3;
+        const unique = new Set(potentialStates.map(st => meta.question.points[st.state] || 0)).size;
+        utility += unique * 2;
+        if (utility > bestUtility) { bestUtility = utility; best = meta; }
+    });
+    return best || candidates[0];
+}
+
+function chooseNextQuestion() {
+    const candidates = getCandidateQuestions();
+    if (candidates.length === 0) return null;
+    const results = getUsableResults();
+    if (history.length === 0) return chooseFirstQuestion(candidates);
+
+    let best = null, bestUtility = -Infinity;
+    candidates.forEach(meta => {
+        const utility = calculateQuestionUtility(meta, results);
+        if (utility > bestUtility) { bestUtility = utility; best = meta; }
+    });
+    return best || candidates[0];
+}
+
+/** @param {any} top */
+function hasFutureThreat(top) {
+    const candidates = getCandidateQuestions();
+    if (candidates.length === 0 || history.length >= MAX_QUESTIONS) return false;
+
+    const topScore = top.score;
+    const statesToCheck = Object.keys(states);
+
+    for (let q = 0; q < candidates.length; q++) {
+        const meta = candidates[q];
+        const topValue = meta.question.points[top.state] || 0;
+        for (let i = 0; i < statesToCheck.length; i++) {
+            const state = statesToCheck[i];
+            if (state === top.state) continue;
+            const currentScore = scores[state] || 0;
+            const value = meta.question.points[state] || 0;
+            const possibleScore = currentScore + Math.max(value, 0);
+            const leaderPossibleScore = topScore + Math.max(topValue, 0);
+            if (possibleScore >= Math.max(topScore * 0.8, 1) && possibleScore >= leaderPossibleScore * 0.85) return true;
+        }
+    }
+    return false;
+}
+
+function shouldStop() {
+    if (history.length >= MAX_QUESTIONS) return true;
+    const results = getUsableResults();
+    if (results.length === 0) return false;
+    const top = results[0];
+    if (top.score <= 0) return false;
+    if (findExactTieGroup(results)) return false;
+    if (hasFutureThreat(top)) return false;
+
+    if (results.length > 1) {
+        const second = results[1];
+        const margin = (top.score - second.score) / Math.max(Math.abs(top.score), 1);
+        if (margin < STOP_MARGIN || top.evidence.questionCount < MIN_EVIDENCE) return false;
+        return true;
+    }
+    return top.evidence.questionCount >= MIN_EVIDENCE;
+}
+
+/** @param {any[]} tiedResults */
+function findTieBreakQuestion(tiedResults) {
+    if (!tiedResults || tiedResults.length < 2) return null;
+    const answered = getAnsweredIds();
+    let best = null, bestDifference = -Infinity;
+
+    questionBank.forEach(meta => {
+        if (answered.has(meta.id)) return;
+        const values = tiedResults.map(res => meta.question.points[res.state] || 0);
+        const unique = new Set(values);
+        if (unique.size < 2) return;
+
+        let difference = 0;
+        for (let i = 0; i < values.length; i++) {
+            for (let j = i + 1; j < values.length; j++) {
+                difference += Math.abs(values[i] - values[j]);
+            }
+        }
+        const utility = difference + (unique.size * 0.5);
+        if (utility > bestDifference) { bestDifference = utility; best = meta; }
+    });
+    return best;
+}
+
+function startTieBreakIfNeeded() {
+    if (tieBreakRound >= 3 || history.length >= MAX_QUESTIONS) return false;
+    const results = getUsableResults();
+    const tied = findExactTieGroup(results);
+    if (!tied) { tieBreakRound = 0; return false; }
+    const question = findTieBreakQuestion(tied);
+    if (!question) return false;
+    tieBreakActive = true;
+    tieBreakRound++;
+    currentQuestionMeta = question;
+    return true;
+}
+
+function updateProgress() {
+    progress.innerHTML = "";
+    const normalCount = history.filter(entry => !entry.isTieBreak).length;
+    const totalDots = Math.min(Math.max(normalCount + 1, 1), 15);
+
+    if (history.length > 0) quizBackButton.classList.remove("hidden");
+    else quizBackButton.classList.add("hidden");
+
+    for (let i = 0; i < totalDots; i++) {
+        const dot = document.createElement("div");
+        dot.className = "progress-dot";
+        if (i < normalCount) dot.classList.add("done");
+        if (i === normalCount && !tieBreakActive) dot.classList.add("active");
+        progress.appendChild(dot);
+    }
+    if (tieBreakActive) {
+        const dot = document.createElement("div");
+        dot.className = "progress-dot tie-break";
+        progress.appendChild(dot);
+    }
+}
+
+/** @param {boolean} [shouldSave=true] */
+function showQuestion(shouldSave = true) {
+    if (!currentQuestionMeta) currentQuestionMeta = chooseNextQuestion();
+    if (!currentQuestionMeta || shouldStop()) { showResult(shouldSave); return; }
+
+    const question = currentQuestionMeta.question;
+    questionText.textContent = question.text;
+    questionDescription.textContent = question.desc || "";
+    updateProgress();
+    triggerAnimation(questionContainer);
+    if (shouldSave) saveSession();
+}
+
+function continueQuiz() {
+    const results = getUsableResults();
+    if (findExactTieGroup(results) && startTieBreakIfNeeded()) { showQuestion(true); return; }
+    tieBreakRound = 0;
+
+    if (shouldStop()) { showResult(true); return; }
+    tieBreakActive = false;
+    currentQuestionMeta = chooseNextQuestion();
+    if (!currentQuestionMeta) { showResult(true); return; }
+    showQuestion(true);
+}
+
+/** @param {string} answer */
+function handleAnswerSelection(answer) {
+    if (!currentQuestionMeta) return;
+    const meta = currentQuestionMeta;
+
+    history.push({
+        questionId: meta.id, path: meta.path, questionIndex: meta.index,
+        points: meta.question.points, answer: answer, isTieBreak: tieBreakActive
+    });
+
+    applyAnswer(meta, answer);
+    if (tieBreakActive) { tieBreakActive = false; currentQuestionMeta = null; continueQuiz(); return; }
+    currentQuestionMeta = null;
+    continueQuiz();
+}
+
+document.querySelectorAll("[data-answer]").forEach(button => {
+    button.addEventListener("click", () => handleAnswerSelection(/** @type {HTMLElement} */ (button).dataset.answer));
+});
+
+function goBackOneStep() {
+    if (history.length === 0) {
+        startQuiz();
+        return;
+    }
+    const last = history.pop();
+    undoAnswer(last);
+    tieBreakActive = false;
+    tieBreakRound = 0;
+    currentQuestionMeta = questionMap.get(last.questionId) || null;
+    resultScreen.classList.add("hidden");
+    quizScreen.classList.remove("hidden");
+    showQuestion(true);
+}
+
+backButton.addEventListener("click", goBackOneStep);
+quizBackButton.addEventListener("click", goBackOneStep);
+
+window.addEventListener("keydown", (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const isQuizVisible = !quizScreen.classList.contains("hidden");
+    const isResultVisible = !resultScreen.classList.contains("hidden");
+
+    if (isQuizVisible) {
+        let targetBtn = null;
+        if (e.key === "1") targetBtn = document.querySelector('[data-answer="yes"]');
+        else if (e.key === "2") targetBtn = document.querySelector('[data-answer="no"]');
+        else if (e.key === "3") targetBtn = document.querySelector('[data-answer="unknown"]');
+        else if ((e.key === "Backspace" || e.key === "ArrowLeft") && history.length > 0) {
+            e.preventDefault(); goBackOneStep(); return;
+        }
+        if (targetBtn) {
+            e.preventDefault();
+            targetBtn.classList.add("key-pressed");
+            setTimeout(() => {
+                targetBtn.classList.remove("key-pressed");
+                handleAnswerSelection(/** @type {HTMLElement} */ (targetBtn).dataset.answer);
+            }, 90);
+        }
+    } else if (isResultVisible) {
+        if (e.key === "Backspace" || e.key === "ArrowLeft") { e.preventDefault(); goBackOneStep(); }
+        else if ((e.key === "o" || e.key === "Enter") && !otherResultsButton.classList.contains("hidden")) { e.preventDefault(); otherResultsButton.click(); }
+        else if (e.key === "r") { e.preventDefault(); startQuiz(); }
+    }
+});
+
+/** @param {any[]} results */
+function calculatePercentages(results) {
+    if (!results.length) return [];
+    const data = results.map(item => ({ ...item, weight: Math.pow(Math.max(item.score, 0.000001), 1.7) }));
+    const total = data.reduce((sum, item) => sum + item.weight, 0);
+    data.forEach(item => { item.percentage = (item.weight / total) * 100; });
+
+    let values = data.map(item => Math.max(1, Math.floor(item.percentage)));
+    let totalInteger = values.reduce((sum, value) => sum + value, 0);
+
+    const decimalOrder = data.map((item, index) => ({ index: index, decimal: item.percentage - Math.floor(item.percentage) })).sort((a, b) => b.decimal - a.decimal);
+
+    let remaining = 100 - totalInteger, pointer = 0;
+    while (remaining > 0) {
+        values[decimalOrder[pointer].index]++;
+        remaining--;
+        pointer++;
+        if (pointer >= decimalOrder.length) pointer = 0;
+    }
+
+    data.forEach((item, index) => { item.displayPercentage = values[index]; });
+    return data.slice(0, 8);
+}
+
+/** @param {number} value */
+function formatPercentage(value) { return Math.max(1, Math.min(100, Math.round(value))) + "%"; }
+/** @param {number} count */
+function formatQuestionCount(count) { return count === 1 ? "1 pergunta" : count + " perguntas"; }
+
+/** @param {boolean} [shouldSave=true] */
+function showResult(shouldSave = true) {
+    quizScreen.classList.add("hidden");
+    resultScreen.classList.remove("hidden");
+    triggerAnimation(resultScreen);
+
+    const results = getUsableResults();
+    const percentages = calculatePercentages(results);
+
+    displayedOtherResults = false;
+    otherResultsContainer.classList.add("hidden");
+    otherResultsList.innerHTML = "";
+
+    if (percentages.length === 0) {
+        resultName.textContent = "Não foi possível determinar";
+        resultPercentage.textContent = "";
+        resultEvidence.textContent = "Evidência insuficiente";
+        resultDescription.textContent = "As respostas não produziram informação suficiente para apontar um estado com segurança.";
+        resultActions.innerHTML = "";
+        resultActions.appendChild(document.createElement("li")).textContent = "Tente responder novamente com as sensações atuais.";
+        otherResultsButton.classList.add("hidden");
+        if (shouldSave) saveSession();
+        return;
+    }
+
+    const main = percentages[0];
+    const state = states[main.state];
+
+    resultName.textContent = state.name;
+    resultPercentage.textContent = `${formatPercentage(main.displayPercentage)} de correspondência`;
+    resultEvidence.textContent = formatQuestionCount(main.evidence.questionCount);
+    resultDescription.textContent = state.description;
+
+    resultActions.innerHTML = "";
+    state.actions.forEach(action => {
+        const li = document.createElement("li");
+        li.textContent = action;
+        resultActions.appendChild(li);
+    });
+
+    if (percentages.length > 1) otherResultsButton.classList.remove("hidden");
+    else otherResultsButton.classList.add("hidden");
+
+    if (shouldSave) saveSession();
+}
+
+otherResultsButton.addEventListener("click", () => {
+    if (displayedOtherResults) return;
+    const results = getUsableResults();
+    const percentages = calculatePercentages(results);
+    const alternatives = percentages.slice(1);
+    otherResultsList.innerHTML = "";
+
+    alternatives.forEach(item => {
+        const state = states[item.state];
+        const card = document.createElement("div");
+        card.className = "other-result-card";
+        card.innerHTML = `
+            <div class="other-result-top">
+                <div class="other-result-name">${state.name}</div>
+                <div class="other-result-percent">${formatPercentage(item.displayPercentage)}</div>
+            </div>
+            <div class="other-result-evidence">${formatQuestionCount(item.evidence.questionCount)}</div>
+            <div class="other-result-description">${state.description}</div>
+        `;
+        otherResultsList.appendChild(card);
+    });
+
+    otherResultsContainer.classList.remove("hidden");
+    triggerAnimation(otherResultsContainer);
+    otherResultsButton.classList.add("hidden");
+    displayedOtherResults = true;
+});
+
+function startQuiz() {
+    clearSession();
+    scores = {};
+    Object.keys(states).forEach(state => { scores[state] = 0; });
+    history = [];
+    currentQuestionMeta = null;
+    tieBreakActive = false;
+    tieBreakRound = 0;
+    displayedOtherResults = false;
+
+    otherResultsContainer.classList.add("hidden");
+    otherResultsList.innerHTML = "";
+    resultScreen.classList.add("hidden");
+    quizScreen.classList.remove("hidden");
+
+    currentQuestionMeta = chooseNextQuestion();
+    showQuestion(false);
+}
+
+restartButton.addEventListener("click", () => {
+    clearSession();
+    resultScreen.classList.add("hidden");
+    quickMenuScreen.classList.remove("hidden");
+    triggerAnimation(quickMenuScreen);
+});
+
+if (!restoreSession()) {
+    quickMenuScreen.classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
