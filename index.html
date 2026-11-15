@@ -652,7 +652,7 @@ function startQuizFromMenu() {
 
 
 /* =========================================================
-   ESTADOS E BANCO DE DADOS DA TEIA ADAPTATIVA (LIMPO DE REPETIÇÕES)
+   ESTADOS E BANCO DE DADOS DA TEIA ADAPTATIVA
 ========================================================= */
 const states = {
     vergonha: {
@@ -844,12 +844,15 @@ const questions = {
         { text: "Parece que você não sente muita coisa ou que nada está interessante?", desc: "Pode existir um estado de vazio ou entorpecimento.", points: { vazio: 4, entorpecimento: 3 } },
         { text: "Você queria que alguma coisa tivesse acontecido de outra maneira?", desc: "Observe se existe uma sensação de impedimento ou resultado frustrante.", points: { frustracao: 4, raiva: 1 } },
         { text: "Você sente que finalmente pode relaxar depois de algo difícil?", desc: "O corpo pode estar saindo de um estado de tensão.", points: { alivio: 4, seguranca: 2 } },
+        { text: "Parece que o peso sumiu e finalmente dá para respirar fundo sem esforço?", desc: "Sensação de calmaria e alívio mental.", points: { alivio: 5, seguranca: 3, alegria: 2 } },
         { text: "Tudo parece muito interessante, urgente ou intenso neste momento?", desc: "Intensidade pode ser prazerosa, mas também pode dificultar perceber o que você realmente quer.", points: { euforia: 3, intensidade: 3, hiperfoco: 1 } },
         { text: "Você está preocupado com algo que ainda nem aconteceu?", desc: "Tente diferenciar possibilidade de perigo presente.", points: { ansiedade: 4, medo: 2, controle: 1 } },
         { text: "Você está irritado porque alguma coisa ultrapassou um limite ou não aconteceu como queria?", desc: "A raiva pode indicar frustração ou um limite atingido.", points: { raiva: 4, frustracao: 2 } },
-        { text: "Você sente falta de alguém, algum lugar ou alguma época?", desc: "", points: { saudade: 4, solidao: 1 } },
-        { text: "Você está muito ligado a alguém, personagem, assunto ou atividade?", desc: "Uma ligação forte pode ser apego, admiração, identificação ou hiperfoco.", points: { apego: 3, hiperfoco: 2 } },
-        { text: "Você está sentindo atração por alguém ou alguma coisa?", desc: "Atração não é a mesma coisa que admiração, identificação ou curiosidade.", points: { atracao: 4, desejo: 2, curiosidade: 1 } },
+        { text: "Você sente falta de alguém, algum lugar ou alguma época?", desc: "Pode indicar saudade ou solidão.", points: { saudade: 5, solidao: 2, carencia: 1 } },
+        { text: "Você está muito ligado a alguém, personagem, assunto ou atividade?", desc: "Uma ligação forte pode ser apego, admiração, identificação ou hiperfoco.", points: { apego: 4, hiperfoco: 2, proximidade: 1 } },
+        { text: "Você está sentindo atração por alguém ou alguma coisa?", desc: "Atração não é a mesma coisa que admiração, identificação ou curiosidade.", points: { atracao: 4, desejo: 4, proximidade: 1 } },
+        { text: "Existe uma vontade muito específica de ver, falar ou estar com alguém agora?", desc: "Foco direcionado de saudade e desejo de conexão.", points: { saudade: 4, desejo: 4, proximidade: 4, carencia: 2 } },
+        { text: "Existe uma sensação de leveza ou vontade de sorrir por algo bom que aconteceu?", desc: "Pode indicar alegria ou início de alívio.", points: { alegria: 5, alivio: 3, seguranca: 2 } },
         { text: "Você sente uma mistura confusa de emoções que não consegue separar ou nomear?", desc: "Dificuldade comum em reconhecer os próprios sentimentos no momento.", points: { entorpecimento: 2, sobrecarga: 3, compreensao: 2 } },
         { text: "Você percebe uma irritação inexplicável surgindo do nada por qualquer pequeno detalhe?", desc: "Pode ser sinal de cansaço acumulado ou necessidade de espaço.", points: { sobrecarga: 4, raiva: 2, inquietacao: 1 } }
     ],
@@ -867,17 +870,17 @@ const questions = {
         { text: "Seus ombros, mandíbula ou mãos estão tensionados sem você perceber?", desc: "Indica acúmulo de tensão somática.", points: { tensao: 5, sobrecarga: 2 } }
     ],
     need: [
-        { text: "Você está tentando conseguir conforto ou aliviar alguma coisa?", desc: "", points: { seguranca: 3, escape: 2, alivio: 2 } },
-        { text: "Você quer carinho, proximidade ou companhia?", desc: "", points: { carencia: 3, proximidade: 4, solidao: 2 } },
+        { text: "Você está tentando conseguir conforto ou aliviar alguma coisa?", desc: "", points: { seguranca: 4, escape: 2, alivio: 3 } },
+        { text: "Você quer carinho, proximidade ou companhia?", desc: "", points: { carencia: 4, proximidade: 5, solidao: 3 } },
         { text: "Você quer que alguém perceba, escute ou reconheça você?", desc: "", points: { atencao: 4, validacao: 3, desejado: 2 } },
         { text: "Você está tentando entender exatamente o que está acontecendo com você?", desc: "", points: { compreensao: 5, curiosidade: 1 } },
         { text: "Você quer controlar ou organizar alguma coisa para diminuir a incerteza?", desc: "", points: { controle: 5, seguranca_busca: 2 } },
         { text: "Você quer sentir alguma coisa mais intensa?", desc: "", points: { intensidade: 4, euforia: 2, vazio: 2 } },
-        { text: "Você está querendo ser desejado, escolhido ou considerado especial?", desc: "", points: { desejado: 5, validacao: 2, proximidade: 1 } },
+        { text: "Você está querendo ser desejado, escolhido ou considerado especial?", desc: "", points: { desejado: 5, validacao: 2, proximidade: 2 } },
         { text: "Você quer descobrir alguma coisa sem necessariamente saber ainda onde isso vai dar?", desc: "", points: { exploracao: 4, curiosidade: 4 } },
         { text: "Você está procurando alguma coisa intensa para escapar da sua cabeça por um tempo?", desc: "Às vezes a necessidade não é exatamente pela atividade, mas por uma mudança forte no estado mental.", points: { escape: 4, intensidade: 3, sobrecarga: 1 } },
         { text: "Você sente uma necessidade urgente de silêncio absoluto ou isolamento?", desc: "Aponta para esgotamento de estímulos.", points: { sobrecarga: 4, escape: 3 } },
-        { text: "Você está sentindo uma necessidade forte de segurança e previsibilidade agora?", desc: "Desejo de retornar a uma base segura.", points: { seguranca_busca: 4, controle: 2 } }
+        { text: "Você está sentindo uma necessidade forte de segurança e previsibilidade agora?", desc: "Desejo de retornar a uma base segura.", points: { seguranca_busca: 5, seguranca: 4, controle: 2 } }
     ],
     action: [
         { text: "Você está preso em uma coisa e está difícil parar?", desc: "Pode ser hiperfoco ou simplesmente uma atividade muito envolvente.", points: { hiperfoco: 5, intensidade: 1 } },
@@ -890,15 +893,15 @@ const questions = {
     ],
     unknown: [
         { text: "Existe alguma coisa acontecendo no seu corpo que você consegue perceber?", desc: "", points: { tensao: 2, inquietacao: 1, sobrecarga: 1 } },
-        { text: "Existe uma vontade forte de alguma coisa?", desc: "", points: { desejo: 2, intensidade: 2, carencia: 1 } },
+        { text: "Existe uma vontade forte de alguma coisa?", desc: "", points: { desejo: 4, intensidade: 2, carencia: 1 } },
         { text: "Você está tentando entender ou descobrir alguma coisa?", desc: "", points: { compreensao: 3, curiosidade: 2, exploracao: 1 } },
-        { text: "Você gostaria que alguém estivesse perto ou prestando atenção em você?", desc: "", points: { proximidade: 3, atencao: 3, carencia: 2 } }
+        { text: "Você gostaria que alguém estivesse perto ou prestando atenção em você?", desc: "", points: { proximidade: 4, atencao: 3, carencia: 3 } }
     ]
 };
 
 
 /* =========================================================
-   LÓGICA DA TEIA ADAPTATIVA E FLUXO
+   LÓGICA DA TEIA ADAPTATIVA E FLUXO (COM VARREDURA OBRIGATÓRIA)
 ========================================================= */
 const STORAGE_KEY = "mapa_de_estados_sessao_v2";
 const MAX_QUESTIONS = 15;
@@ -1151,12 +1154,34 @@ function chooseNextQuestion() {
     const candidates = getCandidateQuestions();
     if (candidates.length === 0) return null;
     const results = getUsableResults();
+
+    // ==========================================
+    // FASE 1: VARREDURA OBRIGATÓRIA DE TODAS AS SEÇÕES
+    // ==========================================
+    const visitedPaths = new Set(history.map(entry => entry.path));
+    const allPaths = ["emotion", "body", "need", "action"];
+    const unvisitedPaths = allPaths.filter(path => !visitedPaths.has(path));
+
+    if (unvisitedPaths.length > 0) {
+        const targetPath = unvisitedPaths[0];
+        const pathCandidates = candidates.filter(item => item.path === targetPath);
+        if (pathCandidates.length > 0) {
+            return pathCandidates[0];
+        }
+    }
+
+    // ==========================================
+    // FASE 2: TEIA ADAPTATIVA INTELIGENTE
+    // ==========================================
     if (history.length === 0) return chooseFirstQuestion(candidates);
 
     let best = null, bestUtility = -Infinity;
     candidates.forEach(meta => {
         const utility = calculateQuestionUtility(meta, results);
-        if (utility > bestUtility) { bestUtility = utility; best = meta; }
+        if (utility > bestUtility) {
+            bestUtility = utility;
+            best = meta;
+        }
     });
     return best || candidates[0];
 }
